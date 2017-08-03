@@ -1,10 +1,12 @@
 ---
 alb:
   aws_region: "ap-northeast-1"
+  vpc_name: "AnsibleVPC"
   subnet_grp:
     - name: "alb-subnet-group"
       subnets:
         - subnet-1
         - subnet-2
   security_groups: "alb-sec-grp"
-  name: "Ansible-ALB"
+  alb_name: "Ansible-ALB"
+  tg_name: "Ansible-TG"
