@@ -1,0 +1,24 @@
+---
+- name: "Get Subnet ID"
+  ec2_vpc_subnet_facts:
+    region: "{{ alb.aws_region }}"
+    filters:
+      "tag:Name": "{{ item.1 }}"
+  with_subelements:
+    - "{{ alb.subnet_grp }}"
+    - subnets
+  register: subnet_fact
+
+- name: "Get Sec Grp ID"
+  ec2_group_facts:
+    region: "{{ alb.aws_region }}"
+    filters:
+      group-name: "{{ alb.security_groups }}"
+  register: group_fact
+
+- name: "Create ALB"
+  command: aws elbv2 create-load-balancer --name "{{ alb.name }}" --subnets "{{ subnet_fact.results[0].subnets[0].id }}" "{{ subnet_fact.results[1].subnets[0].id }}" --security-groups "{{ group_fact.security_groups[0].group_id }}"
+  register: alb_fact
+
+- debug: var=alb_fact
+  when: alb_fact | success
