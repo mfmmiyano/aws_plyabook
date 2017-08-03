@@ -1,0 +1,6 @@
+- name: ls S3
+  command: "aws s3 ls"
+  register: s3_ls
+
+- debug: var=s3_ls
+  when: s3_ls | success
