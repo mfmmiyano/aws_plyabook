@@ -10,3 +10,8 @@ alb:
   security_groups: "alb-sec-grp"
   alb_name: "Ansible-ALB"
   tg_name: "Ansible-TG"
+  tg_grp:
+    - name: "ec2-target-group"
+      ec2:
+        - alb-ec2-1
+        - alb-ec2-2

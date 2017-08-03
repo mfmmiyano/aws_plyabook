@@ -6,7 +6,22 @@
       "tag:Name": "{{ alb.vpc_name }}"
   register: vpc_net_fact
 
+- name: "Get EC2 ID"
+  ec2_remote_facts:
+    region: "{{ alb.aws_region }}"
+    filters:
+      vpc_id: "{{ vpc_net_fact.vpcs[0].id }}"
+      "tag:Name": "{{ item.1 }}"
+  with_subelements:
+    - "{{ alb.tg_grp }}"
+    - ec2
+  register: ec2_facts
+
 - name: "Create Target Group"
   command: aws elbv2 create-target-group --name "{{ alb.tg_name }}" --protocol HTTP --port 80 --vpc-id "{{ vpc_net_fact.vpcs[0].id }}"
   register: tg_fact
 
+- debug:
+
+#- name: "Adding Instance to TG"
+#  command: aws elbv2 register-targets --target-group-arn "{{ tg_fact.stdout_lines.TargetGroups[0].TargetGroupArn }}" --targets Id= "{{ ec2_facts.results[0].instances[0].id }}" Id="{{ ec2_facts.results[1].instances[0].id }}"
